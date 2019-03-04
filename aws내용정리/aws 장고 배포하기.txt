@@ -1,0 +1,96 @@
+﻿<aws 장고 배포하기>
+1. 접속키
+로컬상의 c:/users/playdata/.ssh/에 키페어.pem파일 넣어놓아야함
+
+2. 권한설정
+chmod 400 pem파일
+
+3. 서버 환경 설정
+sudo vi /etc/default/locale
+
+LC_CTYPE="en_US.UTF-8"
+LC_ALL="en_US.UTF-8"
+LANG="en_US.UTF-8"
+
+4.패키지 정보 업데이트
+sudo apt-get update
+
+5.패키지 의존성 검사 및 업그레이드
+sudo apt-get dist-upgrade
+
+6. Python 패키지 매니저 설치
+sudo apt-get install python-pip
+
+7. zsh 설치
+sudo apt-get install zsh
+8. oh my zsh 설치
+sudo curl -L http://install.ohmyz.sh | sh
+
+8. 기본 쉘을 zsh로 변경한 뒤 재접속 (chsh 다음에 유저명을 입력해주어야한다.)
+sudo chsh ubuntu -s /usr/bin/zsh
+
+9. pyenv 설치
+문제 발생에 대비하는 패키지 설치
+sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+xz-utils tk-dev
+
+9-1. pyenv 
+$ git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+
+$ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
+$ echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+$ echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
+
+$ source ~/.bash_profile
+$ pyenv versions
+* system (set by /home/nelp/.pyenv/version)
+
+9.2 pyenv-virtualenv
+$ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+$ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
+$ source ~/.bash_profile
+
+10. pyenv 환경변수 설정
+sudo vi ~/.zshrc
+export PATH="/home/ubuntu/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+11. pyenv python 설치 
+pyenv install 3.6.2
+
+12. Pillow를 위한 Python 라이브러리 설치
+sudo apt-get install python-dev python-setuptools
+
+13. 장고 프로젝트는 root 디렉토리의 srv 폴더에 업로드한다.
+srv 폴더의 소유자를 ubuntu 로 변경한다.
+sudo chown -R ubuntu:ubuntu /srv/
+
+14. srv폴더에 django_project 업로드하기
+scp -i ~/.ssh/ubuntu.pem -r [폴더명] ubuntu@52.78.129.162:/srv/ 
+
+<업로드하고 난 이후>
+django 가상환경 생성
+1. 가상환경 생성
+pyenv virtualenv 3.6.2 django
+
+2. 가상환경 접속
+pyenv activate django
+
+3. 가상환경 안에 django 설치
+pip install django
+
+4. setting.py의 ALLOWED_HOSTS AWS 허용
+DEBUG = True
+ALLOWED_HOSTS = ['52.78.129.162','localhost']
+
+5. 퍼미션 설정
+chmod u+rwx manage.py
+
+6. ff파일 형식을 나타내며 , unix( \n), dos( \r\n) 및 mac( \r) 값을 허용
+vi +':wq ++ff=unix' manage.py
+
+7. 접속
+./manage.py runserver 0:8800
+(ec2서버의 보안포트 8800을 열어주어야 한다)
