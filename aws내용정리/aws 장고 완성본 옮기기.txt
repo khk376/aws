@@ -1,0 +1,58 @@
+1. 완성본 받아서
+2. 완성본을 mysite로 이름 바꿔주고
+3. 전에있던애들을 mysite2나 3으로 변경
+4. 전에있던 .config 파일을 완성본 mysite안으로 복사
+cp -r .config /srv/mysite
+
+- settings.py 설정
+1. 경로설정
+2. database rds설정
+3. static url과 root설정
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.normpath(os.path.join(BASE_DIR, "static")),
+)
+STATIC_ROOT='/srv/mysite/myapp/static/'
+
+-/mysite/mysite/urls.py 설정
+
+urlpatterns = [
+#urls
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+-퍼미션설정
+chmod u+rwx manage.py
+-ff파일 형식을 나타내며 , unix( \n), dos( \r\n) 및 mac( \r) 값을 허용
+vi +':wq ++ff=unix' manage.py
+
+
+uwsgi nginx설정
+1. mysite.conf 파일을 /etc/nginx/sites-available/ 경로에 복사
+sudo cp -f /srv/mysite/.config/nginx/mysite.conf /etc/nginx/sites-available/mysite.conf
+
+2.. sites-available 에 있는 설정파일을 sites-enabled 폴더에 링크
+sudo ln -sf /etc/nginx/sites-available/mysite.conf /etc/nginx/sites-enabled/mysite.conf
+
+3. 리부팅 시 자동으로 실행되도록 설정
+# 실행
+> sudo systemctl start uwsgi.service
+> sudo systemctl enable uwsgi
+# 상태확인
+> systemctl status uwsgi
+
+4. uwsgi.service 파일을 /etc/systemd/system/ 에 하드링크를 걸어준다.
+sudo ln -f /srv/mysite/.config/uwsgi/uwsgi.service /etc/systemd/system/uwsgi.service
+5. 파일을 연결해준 뒤 아래 명령을 실행해서 데몬을 리로드 해준다.
+sudo systemctl daemon-reload
+
+6. 그 다음 아래 명령어로 uwsgi 데몬을 활성화 해준다.
+sudo systemctl enable uwsgi
+
+7. 백그라운드에서 실행중인 프로그램을 확인
+sudo systemctl | grep nginx
+sudo systemctl | grep uwsgi
+
+8. 서버에서 데몬 리로드로 다시 불러와주고, Nginx와 uWSGI를 재부팅해준다.
+
+sudo systemctl daemon-reload
+sudo systemctl restart nginx uwsgi
