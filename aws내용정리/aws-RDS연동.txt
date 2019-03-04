@@ -1,0 +1,23 @@
+DB인스턴스 식별자 : igotitdb
+마스터 사용자 이름: igotit
+마스터 암호:12341234
+db이름:deploy
+ec2보안그룹 
+RDS그룹id: sg-04f357a8d44cb4cff
+
+igotitdb.c8hd03uqp3ip.ap-northeast-2.rds.amazonaws.com
+
+
+settings.py 설정
+# settings.py
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': 'igotitdb.c8hd03uqp3ip.ap-northeast-2.rds.amazonaws.com',
+        'PORT': '5432',
+        'NAME': 'deploy',
+        'USER': 'igotit',
+        'PASSWORD': '*******',
+    }
+}
