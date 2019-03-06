@@ -1,0 +1,16 @@
+crontab -e
+
+첫번째 * 자리에는 0 ~ 59 : 분 
+두번째 * 자리에는 0 ~ 23 : 시간
+세번째 * 자리에는 1 ~ 31 : 일
+네번째 * 자리에는 1 ~ 12 : 월
+다섯째 * 자리에는 0 ~ 6   : 요일 ( 0 : 일요일 )
+
+(매일 00:30AM 에 test.sh 파일 실행)
+30 00 * * * bash /home/ubuntu/test.sh
+
+*ec2 우분투 시간변경(서울시간)
+sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+vi .sh
+python3 Grade_review.py
