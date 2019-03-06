@@ -1,0 +1,100 @@
+﻿-- Table: public.myapp_emotion
+
+-- DROP TABLE public.myapp_emotion;
+
+**********************<myapp_user>********************************
+-- Table: public.myapp_user
+
+-- DROP TABLE public.myapp_user;
+
+CREATE TABLE public.myapp_user
+(
+    id integer NOT NULL DEFAULT nextval('myapp_user_id_seq'::regclass),
+    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    age integer NOT NULL,
+    CONSTRAINT myapp_user_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.myapp_user
+    OWNER to django;
+
+
+
+
+****************<myapp_emotion>********************************************
+CREATE TABLE public.myapp_emotion
+(
+    id integer NOT NULL DEFAULT nextval('myapp_emotion_id_seq'::regclass),
+    sentence text COLLATE pg_catalog."default" NOT NULL,
+    negative double precision NOT NULL,
+    neutral double precision NOT NULL,
+    positive double precision NOT NULL,
+    datetime date,
+    no_id integer NOT NULL,
+    CONSTRAINT myapp_emotion_pkey PRIMARY KEY (id),
+    CONSTRAINT myapp_emotion_no_id_832dd0c6_fk_myapp_user_id FOREIGN KEY (no_id)
+        REFERENCES public.myapp_user (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        DEFERRABLE INITIALLY DEFERRED
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.myapp_emotion
+    OWNER to django;
+
+-- Index: myapp_emotion_no_id_832dd0c6
+
+-- DROP INDEX public.myapp_emotion_no_id_832dd0c6;
+
+CREATE INDEX myapp_emotion_no_id_832dd0c6
+    ON public.myapp_emotion USING btree
+    (no_id)
+    TABLESPACE pg_default;
+
+********************<myapp_word>*****************************
+-- Table: public.myapp_word
+
+-- DROP TABLE public.myapp_word;
+
+CREATE TABLE public.myapp_word
+(
+    id integer NOT NULL DEFAULT nextval('myapp_word_id_seq'::regclass),
+    word character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    count integer NOT NULL,
+    word_part character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    datetime date,
+    no_id integer NOT NULL,
+    CONSTRAINT myapp_word_pkey PRIMARY KEY (id),
+    CONSTRAINT myapp_word_no_id_73b126a3_fk_myapp_user_id FOREIGN KEY (no_id)
+        REFERENCES public.myapp_user (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        DEFERRABLE INITIALLY DEFERRED
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.myapp_word
+    OWNER to django;
+
+-- Index: myapp_word_no_id_73b126a3
+
+-- DROP INDEX public.myapp_word_no_id_73b126a3;
+
+CREATE INDEX myapp_word_no_id_73b126a3
+    ON public.myapp_word USING btree
+    (no_id)
+    TABLESPACE pg_default;
+
+
+
