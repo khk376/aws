@@ -1,0 +1,21 @@
+로컬->aws서버 데이터전송
+(하루에 한번 정해진 시간에 전송)
+
+1. 전송하기위한 배치파일 생성(transfer.bat)
+@echo off
+pushd “%~dp0”
+
+scp -i ~/.ssh/ubuntu.pem -r 파일명 ubuntu@54.180.19.36:~
+
+:exit
+popd
+@echo on
+
+2. aws로 보낼파일이 있는 경로에 배치파일을 복사
+
+3. schtasks /create /tn test /sc daily /mo 1 /tr 경로
+
+작성후
+프로그램:tranfer.bat
+시작위치:경로
+로 변경
