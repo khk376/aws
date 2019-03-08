@@ -1,0 +1,123 @@
+※hk aws manual
+
+<aws cli 설치>
+sudo pip install awscli
+sudo pip install --upgrade --user awscli
+
+<aws cli 설정 >
+aws configure
+
+AWS Access Key ID [None]: 접속키
+AWS Secret Access Key [None]: 비밀키
+Default region name [None]: ap-northeast-2
+Default output format [None]: json
+
+<django>
+[settings.py 설정]
+DEBUG = True
+ALLOWED_HOSTS = ['54.180.19.36','localhost']
+
+[env : python \ r : 그런 파일이나 디렉토리가 없습니다]
+   1. chmod u+rwx filename.py
+   2. chmod +x manage.py
+   3. vi +':wq ++ff=unix' file_with_dos_linebreaks.py
+
+[로컬->aws 파일 전송]
+scp -i ~/.ssh/ubuntu.pem -r [폴더명] ubuntu@54.180.19.36:~
+scp -i ~/.ssh/ubuntu.pem -r auto ubuntu@54.180.19.36:~
+
+
+<RDS>
+
+DB인스턴트 
+DB인스턴스 아이디:mydbinstance
+마스터사용자이름:igotit
+마스터암호:12341234
+
+DB이름: ORCL
+포트:1521
+
+DB엔드포인트
+mydbinstance.c8hd03uqp3ip.ap-northeast-2.rds.amazonaws.com
+
+
+주로 쓰는건 
+
+<ec2 → s3>
+aws s3 cp README.txt s3://[버킷이름]
+<s3 → ec2>
+aws s3 cp s3://[버킷이름]/README.txt ./
+
+aws s3 ls s3://[버킷이름]
+
+=============================
+mv: move 입니다. cp와 마찬가지로 업로드, 다운로드 둘다 되며 다만 명령이 실행 완료되면 오리지널 오브젝트는 지워집니다. 명령어 패턴은 위 cp 와 완전하게 동일합니다.
+
+삭제: rm
+rm: remove 입니다. s3에 있는 오브젝트를 삭제하는 명령어 옵션입니다.
+
+aws s3 rm s3://bucket/to/path
+ec2-shell> (x) 
+aws s3 rm s3://algopie-test/README.txt
+
+목록 보기: ls
+ls: list directory contents 입니다. dos로 치면 dir 과 비슷합니다. ls 로 해당 버킷에 들어 있는 파일 목록을 볼 수 있는 명령어 옵션입니다.
+
+aws s3 ls s3://bucket/to/path
+ec2-shell> aws s3 ls s3://algopie-test
+
+Bucket 생성 / 삭제: mb, rb
+mb: make bucket 입니다. s3에 버킷을 생성하는 명령어 옵션입니다.
+
+aws s3 mb s3://bucket
+ec2-shell> aws s3 mb s3://algopie-test
+rb: remove bucket 입니다. 위에 설명한 rm은 버킷안에 있는 오브젝트를 삭제하는 것 이고 rb는 버킷 자체를 삭제하는 것 입니다.
+
+aws s3 rb s3://bucket
+
+ec2-shell> aws s3 rb s3://algopie-tmp
+
+동기화: sync
+sync: synchronize 입니다. 말그대로 동기화 하는 명령어 옵션입니다. local to s3, s3 to local, s3 to s3 이렇게 3가지를 지원합니다.
+
+aws s3 sync /local/from/path s3://bucket/to/path
+aws s3 sync s3://bucket/from/path /local/to/path
+aws s3 sync s3://bucket/from/path s3://bucket/to/path
+
+ec2-shell> aws s3 sync /home/www/algopie-public s3://algopie-public 
+ec2-shell> aws s3 sync s3://algopie-tmp /home/www/tmp
+ec2-shell> aws s3 sync s3://algopie-public s3://algopie-tmpBash
+장황하게 정리하였지만 사실 help 명령어 옵션으로 모두 자세하게 확인이 가능합니다. 각각 명령 옵션에 대한 헬프도 따로 따로 볼 수 있습니다.
+
+가령 아래와 같은 명령어 옵션을 실행 시키면 sync 옵션에 대한 설명과 자세한 사용법 모두 나오니 help를 활용하는 습관을 들여 놓으면 굳이 검색을 하지 않아도 빠르게 찾아 볼 수 있습니다.
+
+ec2-shell> aws s3 sync help
+
+jupyter notebook
+
+<주피터실행>
+sudo jupyter-notebook --allow-root
+<주피터주소>
+http://52.78.129.162:8890
+
+< 로컬→aws서버 데이터전송 >
+(하루에 한번 정해진 시간에 전송)
+
+1. 전송하기위한 배치파일 생성(transfer.bat)
+@echo off
+pushd “%~dp0”
+
+scp -i ~/.ssh/ubuntu.pem -r 파일명 ubuntu@54.180.19.36:~
+
+:exit
+popd
+@echo on
+
+2. aws로 보낼파일이 있는 경로에 배치파일을 복사
+
+3. schtasks /create /tn test /sc daily /mo 1 /tr 경로
+
+작성후
+프로그램:tranfer.bat
+시작위치:경로
+로 변경
